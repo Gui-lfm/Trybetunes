@@ -7,6 +7,7 @@ import Favorites from './components/Favorites';
 import Profile from './components/Profile';
 import ProfileEdit from './components/ProfileEdit';
 import NotFound from './components/NotFound';
+import searchAlbumsAPI from './services/searchAlbumsAPI';
 
 class App extends React.Component {
   state = {
@@ -14,6 +15,10 @@ class App extends React.Component {
     disabledSearchBtn: true,
     username: '',
     search: '',
+    currentSearch: '',
+    loading: false,
+    searchList: [],
+    hasSearched: false,
   };
 
   onInputChange = ({ target }) => {
@@ -39,8 +44,31 @@ class App extends React.Component {
     });
   };
 
+  searchArtist = async () => {
+    const { search } = this.state;
+    this.setState({ loading: true }, async () => {
+      const result = await searchAlbumsAPI(search);
+      this.setState({
+        currentSearch: search,
+        search: '',
+        loading: false,
+        hasSearched: true,
+        searchList: result,
+      });
+    });
+  };
+
   render() {
-    const { disabledSearchBtn, search, username, disabledUserBtn } = this.state;
+    const {
+      disabledSearchBtn,
+      search,
+      username,
+      disabledUserBtn,
+      loading,
+      hasSearched,
+      searchList,
+      currentSearch,
+    } = this.state;
 
     return (
       <BrowserRouter>
@@ -55,8 +83,13 @@ class App extends React.Component {
               <Search
                 { ...props }
                 search={ search }
+                loading={ loading }
                 disabledSearchBtn={ disabledSearchBtn }
                 onInputChange={ this.onInputChange }
+                searchArtist={ this.searchArtist }
+                hasSearched={ hasSearched }
+                searchList={ searchList }
+                currentSearch={ currentSearch }
               />
             ) }
           />

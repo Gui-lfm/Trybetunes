@@ -19,8 +19,8 @@ class AlbumList extends Component {
                 to={ `/album/${album.collectionId}` }
               >
                 <img src={ album.artworkUrl100 } alt={ album.collectionName } />
-                <p>{album.collectionName}</p>
-                <p>{album.artistName}</p>
+                <h3>{album.collectionName}</h3>
+                <h4>{album.artistName}</h4>
               </Link>
             ))}
           </div>

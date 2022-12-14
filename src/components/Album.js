@@ -38,14 +38,14 @@ class Album extends Component {
     return (
       <div data-testid="page-album">
         <Header />
-        <img src={coverImg} alt={album} />
-        <h2 data-testid="album-name">{album}</h2>
-        <h3 data-testid="artist-name">{artist}</h3>
+        <img src={ coverImg } alt={ album } />
+        <h2 data-testid="album-name">{ album }</h2>
+        <h3 data-testid="artist-name">{ artist }</h3>
         {trackList.map((track) => (
           <MusicCard
-            key={track.trackId}
-            trackName={track.trackName}
-            previewUrl={track.previewUrl}
+            key={ track.trackId }
+            trackName={ track.trackName }
+            previewUrl={ track.previewUrl }
           />
         ))}
       </div>

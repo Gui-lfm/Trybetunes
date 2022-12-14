@@ -9,6 +9,29 @@ import ProfileEdit from './components/ProfileEdit';
 import NotFound from './components/NotFound';
 
 class App extends React.Component {
+  state = {
+    disabledBtn: true,
+    username: '',
+    loading: true,
+  };
+
+  onInputChange = ({ target }) => {
+    const { name } = target;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
+    this.setState({ [name]: value }, this.validateLoginButton);
+  };
+
+  validateLoginButton = () => {
+    const validation = { inputlength: 3 };
+
+    const { username } = this.state;
+    const minLength = username.length < validation.inputlength;
+
+    this.setState({
+      disabledBtn: minLength,
+    });
+  };
+
   render() {
     return (
       <BrowserRouter>
@@ -18,7 +41,17 @@ class App extends React.Component {
           <Route path="/profile" component={ Profile } />
           <Route path="/favorites" component={ Favorites } />
           <Route path="/search" component={ Search } />
-          <Route exact path="/" component={ Login } />
+          <Route
+            exact
+            path="/"
+            render={ (props) => (
+              <Login
+                { ...props }
+                { ...this.state }
+                onInputChange={ this.onInputChange }
+              />
+            ) }
+          />
           <Route path="*" component={ NotFound } />
         </Switch>
       </BrowserRouter>

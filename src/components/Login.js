@@ -8,7 +8,7 @@ class Login extends Component {
   };
 
   render() {
-    const { disabledBtn, onInputChange, username } = this.props;
+    const { disabledUserBtn, onInputChange, username } = this.props;
 
     return (
       <div data-testid="page-login">
@@ -20,7 +20,7 @@ class Login extends Component {
           onChange={ onInputChange }
         />
         <button
-          disabled={ disabledBtn }
+          disabled={ disabledUserBtn }
           type="submit"
           onClick={ () => this.loginUser(username) }
           data-testid="login-submit-button"
@@ -33,7 +33,7 @@ class Login extends Component {
 }
 
 Login.propTypes = {
-  disabledBtn: PropTypes.bool.isRequired,
+  disabledUserBtn: PropTypes.bool.isRequired,
   onInputChange: PropTypes.func.isRequired,
   username: PropTypes.string.isRequired,
 };

@@ -10,29 +10,38 @@ import NotFound from './components/NotFound';
 
 class App extends React.Component {
   state = {
-    disabledBtn: true,
+    disabledUserBtn: true,
+    disabledSearchBtn: true,
     username: '',
-    loading: true,
+    search: '',
   };
 
   onInputChange = ({ target }) => {
     const { name } = target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
-    this.setState({ [name]: value }, this.validateLoginButton);
+    this.setState({ [name]: value }, this.inputValidations);
   };
 
-  validateLoginButton = () => {
-    const validation = { inputlength: 3 };
+  inputValidations = () => {
+    const validation = { usernameLength: 3, searchLength: 2 };
 
-    const { username } = this.state;
-    const minLength = username.length < validation.inputlength;
+    const { username, search } = this.state;
+
+    // verifica se nome do usuário possui tamanho mínimo:
+    const minUserLength = username.length < validation.usernameLength;
+
+    // verifica se a pesquisa possui tamanho mínimo:
+    const minSearchLength = search.length < validation.searchLength;
 
     this.setState({
-      disabledBtn: minLength,
+      disabledUserBtn: minUserLength,
+      disabledSearchBtn: minSearchLength,
     });
   };
 
   render() {
+    const { disabledSearchBtn, search, username, disabledUserBtn } = this.state;
+
     return (
       <BrowserRouter>
         <Switch>
@@ -40,14 +49,25 @@ class App extends React.Component {
           <Route path="/profile/edit" component={ ProfileEdit } />
           <Route path="/profile" component={ Profile } />
           <Route path="/favorites" component={ Favorites } />
-          <Route path="/search" component={ Search } />
+          <Route
+            path="/search"
+            render={ (props) => (
+              <Search
+                { ...props }
+                search={ search }
+                disabledSearchBtn={ disabledSearchBtn }
+                onInputChange={ this.onInputChange }
+              />
+            ) }
+          />
           <Route
             exact
             path="/"
             render={ (props) => (
               <Login
                 { ...props }
-                { ...this.state }
+                username={ username }
+                disabledUserBtn={ disabledUserBtn }
                 onInputChange={ this.onInputChange }
               />
             ) }

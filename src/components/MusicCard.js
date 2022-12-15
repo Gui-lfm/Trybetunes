@@ -1,44 +1,67 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { addSong } from '../services/favoriteSongsAPI';
+import { addSong, getFavoriteSongs } from '../services/favoriteSongsAPI';
 import Loading from './Loading';
 
 class MusicCard extends Component {
   state = {
     loading: false,
     addFavorite: false,
+    favorites: [],
+  };
+
+  componentDidMount() {
+    this.fetchFavorites();
+  }
+
+  fetchFavorites = async () => {
+    const favorites = await getFavoriteSongs();
+    const { track } = this.props;
+    const uniqueFavorites = [
+      ...new Map(
+        favorites.map((favorite) => [favorite.trackId, favorite]),
+      ).values(),
+    ];
+    this.setState({ favorites: uniqueFavorites }, () => {
+      if (this.verifyFavorites(track)) {
+        this.setState({ addFavorite: true });
+      }
+    });
+  };
+
+  verifyFavorites = (track) => {
+    const { favorites } = this.state;
+    return favorites.some((favorite) => favorite.trackId === track.trackId);
   };
 
   handleFavoriteMusic = ({ target }) => {
-    const { trackId } = this.props;
+    const { track } = this.props;
     const { checked } = target;
 
     this.setState({ loading: true }, async () => {
-      await addSong(trackId);
+      await addSong(track);
       this.setState({ loading: false, addFavorite: checked });
     });
   };
 
   render() {
-    const { previewUrl, trackName, trackId } = this.props;
+    const { track } = this.props;
     const { loading, addFavorite } = this.state;
     return loading ? (
       <Loading />
     ) : (
       <div>
-        <p>{trackName}</p>
-        <audio data-testid="audio-component" src={ previewUrl } controls>
+        <p>{track.trackName}</p>
+        <audio data-testid="audio-component" src={ track.previewUrl } controls>
           <track kind="captions" />
           O seu navegador não suporta o elemento
           {' '}
           <code>audio</code>
           {' '}
         </audio>
-        <label
-          htmlFor="favorite-checkbox"
-        >
+        <label htmlFor="favorite-checkbox">
           <input
-            data-testid={ `checkbox-music-${trackId}` }
+            data-testid={ `checkbox-music-${track.trackId}` }
             checked={ addFavorite }
             id="favorite-checkbox"
             type="checkbox"
@@ -52,9 +75,11 @@ class MusicCard extends Component {
 }
 
 MusicCard.propTypes = {
-  previewUrl: PropTypes.string.isRequired,
-  trackName: PropTypes.string.isRequired,
-  trackId: PropTypes.number.isRequired,
+  track: PropTypes.shape({
+    previewUrl: PropTypes.string,
+    trackId: PropTypes.number,
+    trackName: PropTypes.string,
+  }).isRequired,
 };
 
 export default MusicCard;

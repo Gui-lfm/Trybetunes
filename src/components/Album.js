@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-curly-spacing */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import Header from './Header';
@@ -25,11 +24,12 @@ class Album extends Component {
 
   fetchAlbum = async (id) => {
     const selected = await getMusics(id);
+    const tracks = selected.slice(1);
     this.setState({
       artist: selected[0].artistName,
       album: selected[0].collectionName,
       coverImg: selected[0].artworkUrl100,
-      trackList: selected.slice(1),
+      trackList: tracks,
     });
   };
 
@@ -39,14 +39,12 @@ class Album extends Component {
       <div data-testid="page-album">
         <Header />
         <img src={ coverImg } alt={ album } />
-        <h2 data-testid="album-name">{ album }</h2>
-        <h3 data-testid="artist-name">{ artist }</h3>
+        <h2 data-testid="album-name">{album}</h2>
+        <h3 data-testid="artist-name">{artist}</h3>
         {trackList.map((track) => (
           <MusicCard
             key={ track.trackId }
-            trackName={ track.trackName }
-            previewUrl={ track.previewUrl }
-            trackId={ track.trackId }
+            track={ track }
           />
         ))}
       </div>
@@ -62,3 +60,7 @@ Album.propTypes = {
   }).isRequired,
 };
 export default Album;
+
+// refatorar addSong p/ receber uma musica completa --ok
+// levar a lógica de update favorites p/ dentro do musicCard --ok
+// criar dentro do checked a hof some, que vai verificar se o trackId da musica existe no estado de musicas favoritadas

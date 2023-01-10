@@ -52,13 +52,15 @@ class ProfileEdit extends Component {
     this.setState({ isSubmitDisabled: !isEmpty });
   };
 
-  onSubmitEdit = async (event) => {
+  onSubmitEdit = (event) => {
     event.preventDefault();
     const { history } = this.props;
     const { name, email, description, image } = this.state;
     const profileEdited = { name, email, image, description };
-    await updateUser(profileEdited);
-    history.push('/profile');
+    this.setState({ loading: true }, async () => {
+      await updateUser(profileEdited);
+      history.push('/profile');
+    });
   };
 
   render() {
@@ -120,7 +122,7 @@ class ProfileEdit extends Component {
               type="submit"
               onClick={ this.onSubmitEdit }
             >
-              Salvar mudanças
+              Editar perfil
             </button>
           </form>
         )}

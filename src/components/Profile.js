@@ -31,7 +31,6 @@ class Profile extends Component {
 
     return (
       <div data-testid="page-profile">
-        {console.log(currentUser)}
         <Header />
         {loading ? (
           <Loading />
